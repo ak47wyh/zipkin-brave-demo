@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+        <artifactId>dubbo</artifactId>
+        <groupId>com.alibaba.dubbo</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+  <artifactId>consumer</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profile.path>config/dev</profile.path>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profile.path>config/test</profile.path>
+            </properties>
+        </profile>
+    </profiles>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba.dubbo</groupId>
+            <artifactId>common-brave</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>4.3.1.RELEASE</version>
+        </dependency>
+    </dependencies>
+</project>

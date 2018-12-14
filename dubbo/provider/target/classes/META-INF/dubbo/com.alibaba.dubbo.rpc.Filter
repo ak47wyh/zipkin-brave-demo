@@ -1,0 +1,2 @@
+traceFilters=com.alibaba.dubbo.filter.DrpcServerInterceptor
+traceFilterc=com.alibaba.dubbo.filter.DrpcClientInterceptor
