@@ -1,5 +1,7 @@
 package com.example.mvc;
 
+import com.example.mvc.entity.User;
+import com.example.mvc.service.UserService;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,6 +13,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -64,5 +67,30 @@ public class UserController {
         String resulst = restTemplate.postForObject("http://127.0.0.1:8088/example/loginy?username=test&password=test",null,String.class);
         logger.info("restPostTest: ----end");
         return resulst;
+    }
+
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    /**
+     * 展示jdbc sql调用过程
+     */
+    @RequestMapping("mysql")
+    public void mysqlTest1() {
+        String name = jdbcTemplate.queryForObject("SELECT username from test_user", String.class);
+        System.out.println(name);
+    }
+
+    @Autowired
+    private UserService userService;
+
+    /**
+     * 展示jpa sql执行轨迹
+     * @return
+     */
+    @RequestMapping("jpa/mysql")
+    public List<User> mysqlTest(){
+        logger.info("mysqlTest: ----start");
+        return  userService.getAll();
     }
 }

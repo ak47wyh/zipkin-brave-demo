@@ -8,6 +8,7 @@ import com.github.kristofa.brave.http.DefaultSpanNameProvider;
 import com.github.kristofa.brave.http.HttpSpanCollector;
 import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
 import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
+import com.github.kristofa.brave.mysql.MySQLStatementInterceptorManagementBean;
 import com.github.kristofa.brave.servlet.BraveServletFilter;
 import com.github.kristofa.brave.spring.BraveClientHttpRequestInterceptor;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -93,5 +94,16 @@ public class BraveConfig {
         interceptors.add(new BraveClientHttpRequestInterceptor(brave.clientRequestInterceptor(),brave.clientResponseInterceptor(),new DefaultSpanNameProvider()));
         restTemplate.setInterceptors(interceptors);
         return restTemplate;
+    }
+
+    /**
+     * 以jdbc,jpa的方式 去收集sql,在cs,和cr的执行轨迹
+     * @param brave
+     * @return
+     */
+    @Bean
+    public MySQLStatementInterceptorManagementBean mySQLStatementInterceptorManagementBean(Brave brave){
+        MySQLStatementInterceptorManagementBean interceptorManagementBean= new MySQLStatementInterceptorManagementBean(brave.clientTracer());
+        return interceptorManagementBean;
     }
 }
