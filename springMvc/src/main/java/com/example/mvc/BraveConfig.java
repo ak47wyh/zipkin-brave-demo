@@ -9,11 +9,16 @@ import com.github.kristofa.brave.http.HttpSpanCollector;
 import com.github.kristofa.brave.httpclient.BraveHttpRequestInterceptor;
 import com.github.kristofa.brave.httpclient.BraveHttpResponseInterceptor;
 import com.github.kristofa.brave.servlet.BraveServletFilter;
+import com.github.kristofa.brave.spring.BraveClientHttpRequestInterceptor;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 /**
  * springboot brave(zipkin)配置方式
@@ -70,5 +75,23 @@ public class BraveConfig {
                 .addInterceptorFirst(new BraveHttpResponseInterceptor(brave.clientResponseInterceptor()))
                 .build();
         return httpClient;
+    }
+
+    /**
+     * 以resttemplate的方式实现 需要clientRequestInterceptor,clientResponseInterceptor分别完成cs和cr收集操作
+     * @param brave
+     * @return
+     */
+    @Bean
+    public RestTemplate restTemplate(Brave brave){
+//        无法通过RestTemplateBuilder添加过滤器
+//        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+//        restTemplateBuilder.additionalInterceptors(new BraveClientHttpRequestInterceptor(brave.clientRequestInterceptor(),brave.clientResponseInterceptor(),new DefaultSpanNameProvider()));
+//        return restTemplateBuilder.build();
+        RestTemplate restTemplate = new RestTemplate();
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        interceptors.add(new BraveClientHttpRequestInterceptor(brave.clientRequestInterceptor(),brave.clientResponseInterceptor(),new DefaultSpanNameProvider()));
+        restTemplate.setInterceptors(interceptors);
+        return restTemplate;
     }
 }
